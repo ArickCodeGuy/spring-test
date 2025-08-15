@@ -13,7 +13,7 @@ public class HelloController {
     return "Hello world!";
   }
 
-  @GetMapping("/hello/user")
+  @GetMapping("/hello")
   public String getMethodName(@AuthenticationPrincipal OAuth2User principal) {
       return "Hello, " + principal.getAttribute("name") + "!";
   }
