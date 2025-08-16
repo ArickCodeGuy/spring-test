@@ -8,12 +8,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class HelloController {
-  @GetMapping("/public/hello")
+  @GetMapping("/api/public/hello")
   public String hello() {
     return "Hello world!";
   }
 
-  @GetMapping("/hello")
+  @GetMapping("/api/hello")
   public String getMethodName(@AuthenticationPrincipal OAuth2User principal) {
       return "Hello, " + principal.getAttribute("name") + "!";
   }
