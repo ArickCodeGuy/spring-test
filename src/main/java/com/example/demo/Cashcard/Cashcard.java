@@ -1,5 +1,8 @@
 package com.example.demo.Cashcard;
 
+import jakarta.persistence.Entity;
+
+@Entity
 public class Cashcard {
   long id;
   double amount;
@@ -12,6 +15,7 @@ public class Cashcard {
   public long getId() {
     return this.id;
   }
+
   public double getAmount() {
     return this.amount;
   }
