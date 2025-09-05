@@ -24,25 +24,31 @@ public class CashcardController {
   CashcardRepository cashcardRepository;
   
   @GetMapping("/{requestedId}")
-  private ResponseEntity<Cashcard> findById(@PathVariable Long requestedId) {
+  private ResponseEntity<Cashcard> findById(@PathVariable Long requestedId, @AuthenticationPrincipal OAuth2User principal) {
     Optional<Cashcard> optionalCard = cashcardRepository.findById(requestedId);
 
     if (optionalCard.isEmpty()) 
       return ResponseEntity.notFound().build();
 
+    Cashcard cashcard = optionalCard.get();
+
+    if (!isUserCashcardOwner(cashcard, principal))
+      return ResponseEntity.badRequest().build();
+
     return ResponseEntity.ok(optionalCard.get());
   }
 
   @PutMapping
-  private ResponseEntity<Cashcard> create(@RequestBody Cashcard entity) {
-      // db call
+  private ResponseEntity<Cashcard> create(@RequestBody double amount, @AuthenticationPrincipal OAuth2User principal) {
+      Cashcard cashcard = new Cashcard(principal.getAttribute("sub"), amount);
+      Cashcard savedCard = cashcardRepository.save(cashcard);
 
-      return ResponseEntity.ok(entity);
+      return ResponseEntity.ok(savedCard);
   }
 
   @PostMapping("/{requestedId}")
   private ResponseEntity<Cashcard> update(@PathVariable Long requiestedId, @RequestBody Cashcard entity, @AuthenticationPrincipal OAuth2User principal) {
-      ResponseEntity<Cashcard> responseEntity = findById(requiestedId);
+      ResponseEntity<Cashcard> responseEntity = findById(requiestedId, principal);
 
       if (responseEntity.getStatusCode() == HttpStatus.NOT_FOUND) 
         return ResponseEntity.notFound().build();
@@ -59,7 +65,7 @@ public class CashcardController {
 
   @DeleteMapping("/{requestedId}")
   private ResponseEntity<Void> delete(@PathVariable Long requiestedId, @AuthenticationPrincipal OAuth2User principal) {
-      ResponseEntity<Cashcard> responseEntity = findById(requiestedId);
+      ResponseEntity<Cashcard> responseEntity = findById(requiestedId, principal);
 
       if (responseEntity.getStatusCode() == HttpStatus.NOT_FOUND) 
         return ResponseEntity.notFound().build();

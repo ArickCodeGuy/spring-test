@@ -20,11 +20,11 @@ public class Cashcard {
   @Column(name = "owner")
   String owner;
   
+  @NotNull
   @Column(name = "amount")
   double amount;
 
-  public Cashcard(long id, String owner, double amount) {
-    this.id = id;
+  public Cashcard(String owner, double amount) {
     this.owner = owner;
     this.amount = amount;
   }
