@@ -14,15 +14,15 @@ public class Cashcard {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id")  
-  long id;
+  private long id;
 
   @NotNull
   @Column(name = "owner")
-  String owner;
+  private String owner;
   
   @NotNull
   @Column(name = "amount")
-  double amount;
+  private double amount;
 
   public Cashcard(String owner, double amount) {
     this.owner = owner;
@@ -32,4 +32,6 @@ public class Cashcard {
   public long getId() { return this.id; }
   public String getOwner() { return this.owner; }
   public double getAmount() { return this.amount; }
+
+  public void setAmount(double amount) { this.amount = amount; }
 }

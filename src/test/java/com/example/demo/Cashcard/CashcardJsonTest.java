@@ -17,7 +17,7 @@ public class CashcardJsonTest {
   
   @Test
   void cashCardSerializationTest() throws IOException {
-    Cashcard card = new Cashcard(1,2);
+    Cashcard card = new Cashcard("Test",2);
 
     assertThat(json.write(card)).isStrictlyEqualToJson("expected.json");
   }

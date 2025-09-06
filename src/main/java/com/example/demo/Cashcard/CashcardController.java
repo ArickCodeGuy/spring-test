@@ -22,20 +22,20 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class CashcardController {  
   @Autowired
   CashcardRepository cashcardRepository;
-  
+
   @GetMapping("/{requestedId}")
   private ResponseEntity<Cashcard> findById(@PathVariable Long requestedId, @AuthenticationPrincipal OAuth2User principal) {
-    Optional<Cashcard> optionalCard = cashcardRepository.findById(requestedId);
+    Optional<Cashcard> optionalCashcard = cashcardRepository.findById(requestedId);
 
-    if (optionalCard.isEmpty()) 
+    if (optionalCashcard.isEmpty()) 
       return ResponseEntity.notFound().build();
 
-    Cashcard cashcard = optionalCard.get();
-
+    Cashcard cashcard = optionalCashcard.get();
+      
     if (!isUserCashcardOwner(cashcard, principal))
       return ResponseEntity.badRequest().build();
 
-    return ResponseEntity.ok(optionalCard.get());
+    return ResponseEntity.ok(cashcard);
   }
 
   @PutMapping
@@ -47,18 +47,19 @@ public class CashcardController {
   }
 
   @PostMapping("/{requestedId}")
-  private ResponseEntity<Cashcard> update(@PathVariable Long requiestedId, @RequestBody Cashcard entity, @AuthenticationPrincipal OAuth2User principal) {
+  private ResponseEntity<Cashcard> update(@PathVariable Long requiestedId, @RequestBody double amount, @AuthenticationPrincipal OAuth2User principal) {
       ResponseEntity<Cashcard> responseEntity = findById(requiestedId, principal);
-
-      if (responseEntity.getStatusCode() == HttpStatus.NOT_FOUND) 
-        return ResponseEntity.notFound().build();
-
       Cashcard cashcard = responseEntity.getBody();
+
+      if (cashcard == null) 
+        return ResponseEntity.notFound().build();
 
       if (!isUserCashcardOwner(cashcard, principal)) 
         return ResponseEntity.badRequest().build();
 
-      // db call
+      cashcard.setAmount(amount);
+
+      cashcardRepository.save(cashcard);
 
       return ResponseEntity.ok(cashcard);
   }
@@ -75,7 +76,7 @@ public class CashcardController {
       if (!isUserCashcardOwner(cashcard, principal)) 
         return ResponseEntity.badRequest().build();
 
-      // db call
+      cashcardRepository.deleteById(requiestedId);
 
       return ResponseEntity.noContent().build();
   }
